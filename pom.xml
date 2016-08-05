@@ -1,0 +1,2000 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com</groupId>
+  <artifactId>SProject</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+   
+       <dependency> <!-- Kafka -->
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka_2.10</artifactId>
+            <version>0.9.0.0</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.jms</groupId>
+                    <artifactId>jms</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.sun.jdmk</groupId>
+                    <artifactId>jmxtools</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.sun.jmx</groupId>
+                    <artifactId>jmxri</artifactId>
+                </exclusion>
+            </exclusions>
+           
+        </dependency>
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-clients</artifactId>
+            <version>0.9.0.0</version>
+        </dependency>
+   
+   
+        <!-- <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka_2.10</artifactId>
+            <version>0.8.1.1</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.jms</groupId>
+                    <artifactId>jms</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.sun.jdmk</groupId>
+                    <artifactId>jmxtools</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.sun.jmx</groupId>
+                    <artifactId>jmxri</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+ -->
+        <dependency>
+            <groupId>com.jcabi.incubator</groupId>
+            <artifactId>xembly</artifactId>
+            <version>0.17</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-core_2.10</artifactId>
+            <version>1.5.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>net.java.dev.jets3t</groupId>
+                    <artifactId>jets3t</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-streaming_2.10</artifactId>
+            <version>1.5.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-streaming-kafka_2.10</artifactId>
+            <version>1.5.0</version>
+        </dependency>
+       
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-sql_2.10</artifactId>
+            <version>1.5.0</version>
+            <scope>provided</scope>
+        </dependency>
+       
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-hive_2.10</artifactId>
+            <version>1.5.0</version>
+            <scope>provided</scope>
+        </dependency>
+       
+        <dependency> <!-- Command Line Parsing -->
+            <groupId>commons-cli</groupId>
+            <artifactId>commons-cli</artifactId>
+            <version>1.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.hbase</groupId>
+            <artifactId>hbase-client</artifactId>
+            <version>1.0.0-cdh5.5.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.hbase</groupId>
+            <artifactId>hbase-server</artifactId>
+            <version>1.0.0-cdh5.5.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.java.dev.jets3t</groupId>
+            <artifactId>jets3t</artifactId>
+            <version>0.8.0</version>
+        </dependency>
+
+    </dependencies>
+
+    <repositories>
+        <repository>
+            <id>cloudera-repo-releases</id>
+            <url>http://repository.cloudera.com/artifactory/repo/</url>
+        </repository>
+    </repositories>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <mainClass>com.WCount</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
+
+=+=+=+====================================
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+
+                xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+                <modelVersion>4.0.0</modelVersion>
+
+                <groupId>com</groupId>
+
+                <artifactId>SSspark</artifactId>
+
+                <version>0.0.1-SNAPSHOT</version>
+
+                <packaging>jar</packaging>
+
+ 
+
+                <properties>
+
+                                <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+                </properties>
+
+ 
+
+                <dependencies>
+
+                                <!-- <dependency> <groupId>org.apache.kafka</groupId> <artifactId>kafka_2.10</artifactId>
+
+                                                <version>0.8.1.1</version> <exclusions> <exclusion> <groupId>javax.jms</groupId>
+
+                                                <artifactId>jms</artifactId> </exclusion> <exclusion> <groupId>com.sun.jdmk</groupId>
+
+                                                <artifactId>jmxtools</artifactId> </exclusion> <exclusion> <groupId>com.sun.jmx</groupId>
+
+                                                <artifactId>jmxri</artifactId> </exclusion> </exclusions> </dependency> -->
+
+                                <dependency>
+
+                                                <groupId>org.apache.kafka</groupId>
+
+                                                <artifactId>kafka_2.10</artifactId>
+
+                                                <version>0.9.0.0</version>
+
+                                </dependency>
+
+ 
+
+                                <dependency>
+
+                                                <groupId>org.apache.kafka</groupId>
+
+                                                <artifactId>kafka-clients</artifactId>
+
+                                                <version>0.9.0.0</version>
+
+                                </dependency>
+
+ 
+
+                                <dependency>
+
+                                                <groupId>org.scala-lang</groupId>
+
+                                                <artifactId>scala-library</artifactId>
+
+                                                <version>2.10.6</version>
+
+                                </dependency>
+
+ 
+
+                                <dependency>
+
+                                                <groupId>org.apache.spark</groupId>
+
+                                                <artifactId>spark-core_2.10</artifactId>
+
+                                                <version>1.5.0</version>
+
+                                </dependency>
+
+ 
+
+                                <dependency>
+
+                                                <groupId>org.apache.spark</groupId>
+
+                                                <artifactId>spark-streaming_2.10</artifactId>
+
+                                                <version>1.5.0</version>
+
+                                </dependency>
+
+ 
+
+                                <dependency>
+
+                                                <groupId>org.apache.spark</groupId>
+
+                                                <artifactId>spark-streaming-kafka_2.10</artifactId>
+
+                                                <version>1.5.0</version>
+
+                                </dependency>
+
+ 
+
+                                <!-- <dependency> <groupId>org.apache.hbase</groupId> <artifactId>hbase-common</artifactId>
+
+                                                <version>1.0.0</version> </dependency> <dependency> <groupId>org.apache.hbase</groupId>
+
+                                                <artifactId>hbase-server</artifactId> <version>1.0.0</version> </dependency> -->
+
+                                <!-- <dependency> <groupId>jdk.tools</groupId> <artifactId>jdk.tools</artifactId>
+
+                                                <version>1.6</version> </dependency> -->
+
+ 
+
+                                <!-- <dependency> <groupId>org.apache.hbase</groupId> <artifactId>hbase-client</artifactId>
+
+                                                <version>1.0.0</version> </dependency> -->
+
+                                <!-- <dependency> <groupId>org.apache.hadoop</groupId> <artifactId>hadoop-client</artifactId>
+
+                                                <version>2.6.0</version> </dependency> -->
+
+ 
+
+                </dependencies>
+
+ 
+
+                <build>
+
+                                <plugins>
+
+                                                <plugin>
+
+                                                                <artifactId>maven-assembly-plugin</artifactId>
+
+                                                                <version>2.4</version>
+
+                                                                <configuration>
+
+                                                                                <descriptorRefs>
+
+                                                                                                <descriptorRef>jar-with-dependencies</descriptorRef>
+
+                                                                                </descriptorRefs>
+
+                                                                                <archive>
+
+                                                                                                <manifest>
+
+                                                                                                                <addClasspath>true</addClasspath>
+
+                                                                                                                <classpathPrefix>lib/</classpathPrefix>
+
+                                                                                                                <mainClass>com.WordCount</mainClass>
+
+                                                                                                </manifest>
+
+                                                                                </archive>
+
+                                                                </configuration>
+
+                                                                <executions>
+
+                                                                                <execution>
+
+                                                                                                <id>make-assembly</id>
+
+                                                                                                <phase>package</phase>
+
+                                                                                                <goals>
+
+                                                                                                                <goal>single</goal>
+
+                                                                                                </goals>
+
+                                                                                </execution>
+
+                                                                </executions>
+
+                                                </plugin>
+
+                                </plugins>
+
+                </build>
+
+</project>
+
+ 
+
+=============================
+
+ 
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+
+                xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+                <modelVersion>4.0.0</modelVersion>
+
+                <groupId>com</groupId>
+
+                <artifactId>SSS</artifactId>
+
+                <version>0.0.1-SNAPSHOT</version>
+
+                <packaging>jar</packaging>
+
+ 
+
+                <name>kafka-producer</name>
+
+                <url>http://maven.apache.org</url>
+
+ 
+
+                <properties>
+
+                                <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+                </properties>
+
+ 
+
+                <dependencies>
+
+                                <dependency>
+
+                                                <groupId>org.apache.kafka</groupId>
+
+                                                <artifactId>kafka_2.10</artifactId>
+
+                                                <version>0.8.1.1</version>
+
+                                                <exclusions>
+
+                                                                <exclusion>
+
+                                                                                <groupId>javax.jms</groupId>
+
+                                                                                <artifactId>jms</artifactId>
+
+                                                                </exclusion>
+
+                                                                <exclusion>
+
+                                                                                <groupId>com.sun.jdmk</groupId>
+
+                                                                                <artifactId>jmxtools</artifactId>
+
+                                                                </exclusion>
+
+                                                                <exclusion>
+
+                                                                                <groupId>com.sun.jmx</groupId>
+
+                                                                                <artifactId>jmxri</artifactId>
+
+                                                                </exclusion>
+
+                                                </exclusions>
+
+                                </dependency>
+
+ 
+
+                                <dependency>
+
+                                                <groupId>org.apache.spark</groupId>
+
+                                                <artifactId>spark-core_2.10</artifactId>
+
+                                                <version>1.5.0</version>
+
+                                </dependency>
+
+                               
+
+                                <dependency>
+
+                                                <groupId>org.apache.spark</groupId>
+
+                                                <artifactId>spark-streaming_2.10</artifactId>
+
+                                                <version>1.5.0</version>
+
+                                </dependency>
+
+ 
+
+                                <dependency>
+
+                                                <groupId>org.apache.spark</groupId>
+
+                                                <artifactId>spark-streaming-kafka_2.10</artifactId>
+
+                                                <version>1.5.0</version>
+
+                                </dependency>
+
+ 
+
+                                <dependency>
+
+                                                <groupId>com.jcabi.incubator</groupId>
+
+                                                <artifactId>xembly</artifactId>
+
+                                                <version>0.17</version>
+
+                                </dependency>
+
+ 
+
+                                <!-- <dependency>
+
+                                                <groupId>org.apache.hbase</groupId>
+
+                                                <artifactId>hbase-client</artifactId>
+
+                                                <version>1.0.0-cdh5.5.0</version>
+
+                                </dependency> -->
+
+ 
+
+                                <dependency>
+
+                                                <groupId>net.java.dev.jets3t</groupId>
+
+                                                <artifactId>jets3t</artifactId>
+
+                                                <version>0.8.0</version>
+
+                                </dependency>
+
+ 
+
+                </dependencies>
+
+               
+
+                <build>
+
+                                <plugins>
+
+                                                <plugin>
+
+                                                                <artifactId>maven-assembly-plugin</artifactId>
+
+                                                                <version>2.4</version>
+
+                                                                <configuration>
+
+                                                                                <descriptorRefs>
+
+                                                                                                <descriptorRef>jar-with-dependencies</descriptorRef>
+
+                                                                                </descriptorRefs>
+
+                                                                                <archive>
+
+                                                                                                <manifest>
+
+                                                                                                                <addClasspath>true</addClasspath>
+
+                                                                                                                <classpathPrefix>lib/</classpathPrefix>
+
+                                                                                                                <mainClass>com.Producer</mainClass>
+
+                                                                                                </manifest>
+
+                                                                                </archive>
+
+                                                                </configuration>
+
+                                                                <executions>
+
+                                                                                <execution>
+
+                                                                                                <id>make-assembly</id>
+
+                                                                                                <phase>package</phase>
+
+                                                                                                <goals>
+
+                                                                                                                <goal>single</goal>
+
+                                                                                                </goals>
+
+                                                                                </execution>
+
+                                                                </executions>
+
+                                                </plugin>
+
+                                </plugins>
+
+                </build>
+
+</project>
+
+ 
+
++++++++++++++++++++++
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+
+                xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+                <modelVersion>4.0.0</modelVersion>
+
+                <groupId>com</groupId>
+
+                <artifactId>SSSspark</artifactId>
+
+                <version>0.0.1-SNAPSHOT</version>
+
+ 
+
+                <name>fault-detection-spark</name>
+
+                <url>http://maven.apache.org</url>
+
+ 
+
+                <properties>
+
+                                <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+                </properties>
+
+ 
+
+                <dependencies>
+
+                                <dependency>
+
+                                                <groupId>com</groupId>
+
+                                                <artifactId>hconnector</artifactId>
+
+                                                <version>0.0.1-SNAPSHOT</version>
+
+                                </dependency>
+
+ 
+
+                                <dependency>
+
+                                                <groupId>com</groupId>
+
+                                                <artifactId>common</artifactId>
+
+                                                <version>0.0.1-SNAPSHOT</version>
+
+                                </dependency>
+
+ 
+
+                                <dependency>
+
+                                                <groupId>org.apache.kafka</groupId>
+
+                                                <artifactId>kafka_2.10</artifactId>
+
+                                                <version>0.8.1.1</version>
+
+                                                <exclusions>
+
+                                                                <exclusion>
+
+                                                                                <groupId>javax.jms</groupId>
+
+                                                                                <artifactId>jms</artifactId>
+
+                                                                </exclusion>
+
+                                                                <exclusion>
+
+                                                                                <groupId>com.sun.jdmk</groupId>
+
+                                                                                <artifactId>jmxtools</artifactId>
+
+                                                                </exclusion>
+
+                                                                <exclusion>
+
+                                                                                <groupId>com.sun.jmx</groupId>
+
+                                                                                <artifactId>jmxri</artifactId>
+
+                                                                </exclusion>
+
+                                                </exclusions>
+
+                                </dependency>
+
+ 
+
+                                <dependency>
+
+                                                <groupId>org.apache.spark</groupId>
+
+                                                <artifactId>spark-core_2.10</artifactId>
+
+                                                <version>1.5.0</version>
+
+                                </dependency>
+
+ 
+
+                                <dependency>
+
+                                                <groupId>org.apache.spark</groupId>
+
+                                                <artifactId>spark-streaming_2.10</artifactId>
+
+                                                <version>1.5.0</version>
+
+                                </dependency>
+
+ 
+
+                                <dependency>
+
+                                                <groupId>org.apache.spark</groupId>
+
+                                                <artifactId>spark-streaming-kafka_2.10</artifactId>
+
+                                                <version>1.5.0</version>
+
+                                </dependency>
+
+ 
+
+                                <dependency>
+
+                                                <groupId>com.jcabi.incubator</groupId>
+
+                                                <artifactId>xembly</artifactId>
+
+                                                <version>0.17</version>
+
+                                </dependency>
+
+ 
+
+                                <dependency>
+
+                                                <groupId>org.apache.hbase</groupId>
+
+                                                <artifactId>hbase-client</artifactId>
+
+                                                <version>1.0.0-cdh5.5.0</version>
+
+                                </dependency>
+
+ 
+
+                                <dependency>
+
+                                                <groupId>org.apache.hbase</groupId>
+
+                                                <artifactId>hbase-server</artifactId>
+
+                                                <version>1.0.0-cdh5.5.0</version>
+
+                                </dependency>
+
+ 
+
+                                <dependency>
+
+                                                <groupId>net.java.dev.jets3t</groupId>
+
+                                                <artifactId>jets3t</artifactId>
+
+                                                <version>0.7.1</version>
+
+                                </dependency>
+
+ 
+
+                                <!-- <dependency> <groupId>org.apache.hbase</groupId> <artifactId>hbase-client</artifactId>
+
+                                                <version>1.0.0-cdh5.5.0</version> </dependency> -->
+
+                                               
+
+                                <dependency>
+
+                                                <groupId>org.slf4j</groupId>
+
+                                                <artifactId>slf4j-api</artifactId>
+
+                                                <version>1.7.5</version>
+
+                                </dependency>
+
+                               
+
+                                <dependency>
+
+                                                <groupId>org.slf4j</groupId>
+
+                                                <artifactId>slf4j-simple</artifactId>
+
+                                                <version>1.7.5</version>
+
+                                                <scope>test</scope>
+
+                                </dependency>
+
+                </dependencies>
+
+ 
+
+                <repositories>
+
+                                <repository>
+
+                                                <id>cloudera-repo-releases</id>
+
+                                                <url>http://repository.cloudera.com/artifactory/repo/</url>
+
+                                </repository>
+
+                </repositories>
+
+ 
+
+                <build>
+
+                                <plugins>
+
+                                                <plugin>
+
+                                                                <artifactId>maven-assembly-plugin</artifactId>
+
+                                                                <version>2.4</version>
+
+                                                                <configuration>
+
+                                                                                <descriptorRefs>
+
+                                                                                                <descriptorRef>jar-with-dependencies</descriptorRef>
+
+                                                                                </descriptorRefs>
+
+                                                                                <archive>
+
+                                                                                                <manifest>
+
+                                                                                                                <addClasspath>true</addClasspath>
+
+                                                                                                                <classpathPrefix>lib/</classpathPrefix>
+
+                                                                                                                <mainClass>com.Producer</mainClass>
+
+                                                                                                </manifest>
+
+                                                                                </archive>
+
+                                                                </configuration>
+
+                                                                <executions>
+
+                                                                                <execution>
+
+                                                                                                <id>make-assembly</id>
+
+                                                                                                <phase>package</phase>
+
+                                                                                                <goals>
+
+                                                                                                                <goal>single</goal>
+
+                                                                                                </goals>
+
+                                                                                </execution>
+
+                                                                </executions>
+
+                                                </plugin>
+
+                                </plugins>
+
+                </build>
+
+</project>
+
+ 
+
+val sqlContext = new org.apache.spark.sql.hive.HiveContext(sc)
+
+   sqlContext.sql("CREATE TABLE IF NOT EXISTS e360_models.employee(id INT, name STRING, age INT) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n'")
+
+ 
+
+   sqlContext.sql("insert into table e360_models.employee select t.* from (select 1210, 'rahul', 55) t")
+
+   sqlContext.sql("insert into table e360_models.employee select t.* from (select 1211, 'sriram pv', 35) t")
+
+   sqlContext.sql("insert into table e360_models.employee select t.* from (select 1212, 'gowri', 59) t")
+
+ 
+
+   val result = sqlContext.sql("FROM e360_models.employee SELECT id, name, age")
+
+   result.show()
+
+ 
+
+set hive.merge.mapfiles =true;
+
+set hive.merge.mapredfiles =true;
+
+set hive.merge.smallfiles.avgsize=1024000000;
+
+ 
+
+=========
+
+Settings.xml
+
+ 
+
+<settings>
+
+ 
+
+ 
+
+  <activeProfiles>
+
+    <!--make the profile active all the time -->
+
+    <activeProfile>securecentral</activeProfile>
+
+  </activeProfiles>
+
+  <profiles>
+
+    <profile>
+
+      <id>securecentral</id>
+
+      <!--Override the repository (and pluginRepository) "central" from the
+
+         Maven Super POM -->
+
+      <repositories>
+
+        <repository>
+
+          <id>central</id>
+
+          <url>http://repo1.maven.org/maven2</url>
+
+          <releases>
+
+            <enabled>true</enabled>
+
+          </releases>
+
+        </repository>
+
+      </repositories>
+
+      <pluginRepositories>
+
+        <pluginRepository>
+
+          <id>central</id>
+
+          <url>http://repo1.maven.org/maven2</url>
+
+          <releases>
+
+            <enabled>true</enabled>
+
+          </releases>
+
+        </pluginRepository>
+
+      </pluginRepositories>
+
+    </profile>
+
+  </profiles>
+
+ 
+
+ 
+
+ 
+
+<proxies>
+
+    <proxy>
+
+      <id>proxy</id>
+
+      <active>true</active>
+
+      <protocol>http</protocol>
+
+      <host>p.com</host>
+
+      <port>zzz</port>
+
+      <username>xxxxxx</username>
+
+      <password>xxxxxx</password>
+
+    </proxy>
+
+</proxies>
+
+</settings>
+
+
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com</groupId>
+  <artifactId>SProject</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+   
+       <dependency> <!-- Kafka -->
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka_2.10</artifactId>
+            <version>0.9.0.0</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.jms</groupId>
+                    <artifactId>jms</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.sun.jdmk</groupId>
+                    <artifactId>jmxtools</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.sun.jmx</groupId>
+                    <artifactId>jmxri</artifactId>
+                </exclusion>
+            </exclusions>
+           
+        </dependency>
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-clients</artifactId>
+            <version>0.9.0.0</version>
+        </dependency>
+   
+   
+        <!-- <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka_2.10</artifactId>
+            <version>0.8.1.1</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.jms</groupId>
+                    <artifactId>jms</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.sun.jdmk</groupId>
+                    <artifactId>jmxtools</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.sun.jmx</groupId>
+                    <artifactId>jmxri</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+ -->
+        <dependency>
+            <groupId>com.jcabi.incubator</groupId>
+            <artifactId>xembly</artifactId>
+            <version>0.17</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-core_2.10</artifactId>
+            <version>1.5.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>net.java.dev.jets3t</groupId>
+                    <artifactId>jets3t</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-streaming_2.10</artifactId>
+            <version>1.5.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-streaming-kafka_2.10</artifactId>
+            <version>1.5.0</version>
+        </dependency>
+       
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-sql_2.10</artifactId>
+            <version>1.5.0</version>
+            <scope>provided</scope>
+        </dependency>
+       
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-hive_2.10</artifactId>
+            <version>1.5.0</version>
+            <scope>provided</scope>
+        </dependency>
+       
+        <dependency> <!-- Command Line Parsing -->
+            <groupId>commons-cli</groupId>
+            <artifactId>commons-cli</artifactId>
+            <version>1.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.hbase</groupId>
+            <artifactId>hbase-client</artifactId>
+            <version>1.0.0-cdh5.5.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.hbase</groupId>
+            <artifactId>hbase-server</artifactId>
+            <version>1.0.0-cdh5.5.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.java.dev.jets3t</groupId>
+            <artifactId>jets3t</artifactId>
+            <version>0.8.0</version>
+        </dependency>
+
+    </dependencies>
+
+    <repositories>
+        <repository>
+            <id>cloudera-repo-releases</id>
+            <url>http://repository.cloudera.com/artifactory/repo/</url>
+        </repository>
+    </repositories>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <mainClass>com.WCount</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
+
+=+=+=+====================================
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+
+                xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+                <modelVersion>4.0.0</modelVersion>
+
+                <groupId>com</groupId>
+
+                <artifactId>SSspark</artifactId>
+
+                <version>0.0.1-SNAPSHOT</version>
+
+                <packaging>jar</packaging>
+
+ 
+
+                <properties>
+
+                                <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+                </properties>
+
+ 
+
+                <dependencies>
+
+                                <!-- <dependency> <groupId>org.apache.kafka</groupId> <artifactId>kafka_2.10</artifactId>
+
+                                                <version>0.8.1.1</version> <exclusions> <exclusion> <groupId>javax.jms</groupId>
+
+                                                <artifactId>jms</artifactId> </exclusion> <exclusion> <groupId>com.sun.jdmk</groupId>
+
+                                                <artifactId>jmxtools</artifactId> </exclusion> <exclusion> <groupId>com.sun.jmx</groupId>
+
+                                                <artifactId>jmxri</artifactId> </exclusion> </exclusions> </dependency> -->
+
+                                <dependency>
+
+                                                <groupId>org.apache.kafka</groupId>
+
+                                                <artifactId>kafka_2.10</artifactId>
+
+                                                <version>0.9.0.0</version>
+
+                                </dependency>
+
+ 
+
+                                <dependency>
+
+                                                <groupId>org.apache.kafka</groupId>
+
+                                                <artifactId>kafka-clients</artifactId>
+
+                                                <version>0.9.0.0</version>
+
+                                </dependency>
+
+ 
+
+                                <dependency>
+
+                                                <groupId>org.scala-lang</groupId>
+
+                                                <artifactId>scala-library</artifactId>
+
+                                                <version>2.10.6</version>
+
+                                </dependency>
+
+ 
+
+                                <dependency>
+
+                                                <groupId>org.apache.spark</groupId>
+
+                                                <artifactId>spark-core_2.10</artifactId>
+
+                                                <version>1.5.0</version>
+
+                                </dependency>
+
+ 
+
+                                <dependency>
+
+                                                <groupId>org.apache.spark</groupId>
+
+                                                <artifactId>spark-streaming_2.10</artifactId>
+
+                                                <version>1.5.0</version>
+
+                                </dependency>
+
+ 
+
+                                <dependency>
+
+                                                <groupId>org.apache.spark</groupId>
+
+                                                <artifactId>spark-streaming-kafka_2.10</artifactId>
+
+                                                <version>1.5.0</version>
+
+                                </dependency>
+
+ 
+
+                                <!-- <dependency> <groupId>org.apache.hbase</groupId> <artifactId>hbase-common</artifactId>
+
+                                                <version>1.0.0</version> </dependency> <dependency> <groupId>org.apache.hbase</groupId>
+
+                                                <artifactId>hbase-server</artifactId> <version>1.0.0</version> </dependency> -->
+
+                                <!-- <dependency> <groupId>jdk.tools</groupId> <artifactId>jdk.tools</artifactId>
+
+                                                <version>1.6</version> </dependency> -->
+
+ 
+
+                                <!-- <dependency> <groupId>org.apache.hbase</groupId> <artifactId>hbase-client</artifactId>
+
+                                                <version>1.0.0</version> </dependency> -->
+
+                                <!-- <dependency> <groupId>org.apache.hadoop</groupId> <artifactId>hadoop-client</artifactId>
+
+                                                <version>2.6.0</version> </dependency> -->
+
+ 
+
+                </dependencies>
+
+ 
+
+                <build>
+
+                                <plugins>
+
+                                                <plugin>
+
+                                                                <artifactId>maven-assembly-plugin</artifactId>
+
+                                                                <version>2.4</version>
+
+                                                                <configuration>
+
+                                                                                <descriptorRefs>
+
+                                                                                                <descriptorRef>jar-with-dependencies</descriptorRef>
+
+                                                                                </descriptorRefs>
+
+                                                                                <archive>
+
+                                                                                                <manifest>
+
+                                                                                                                <addClasspath>true</addClasspath>
+
+                                                                                                                <classpathPrefix>lib/</classpathPrefix>
+
+                                                                                                                <mainClass>com.WordCount</mainClass>
+
+                                                                                                </manifest>
+
+                                                                                </archive>
+
+                                                                </configuration>
+
+                                                                <executions>
+
+                                                                                <execution>
+
+                                                                                                <id>make-assembly</id>
+
+                                                                                                <phase>package</phase>
+
+                                                                                                <goals>
+
+                                                                                                                <goal>single</goal>
+
+                                                                                                </goals>
+
+                                                                                </execution>
+
+                                                                </executions>
+
+                                                </plugin>
+
+                                </plugins>
+
+                </build>
+
+</project>
+
+ 
+
+=============================
+
+ 
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+
+                xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+                <modelVersion>4.0.0</modelVersion>
+
+                <groupId>com</groupId>
+
+                <artifactId>SSS</artifactId>
+
+                <version>0.0.1-SNAPSHOT</version>
+
+                <packaging>jar</packaging>
+
+ 
+
+                <name>kafka-producer</name>
+
+                <url>http://maven.apache.org</url>
+
+ 
+
+                <properties>
+
+                                <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+                </properties>
+
+ 
+
+                <dependencies>
+
+                                <dependency>
+
+                                                <groupId>org.apache.kafka</groupId>
+
+                                                <artifactId>kafka_2.10</artifactId>
+
+                                                <version>0.8.1.1</version>
+
+                                                <exclusions>
+
+                                                                <exclusion>
+
+                                                                                <groupId>javax.jms</groupId>
+
+                                                                                <artifactId>jms</artifactId>
+
+                                                                </exclusion>
+
+                                                                <exclusion>
+
+                                                                                <groupId>com.sun.jdmk</groupId>
+
+                                                                                <artifactId>jmxtools</artifactId>
+
+                                                                </exclusion>
+
+                                                                <exclusion>
+
+                                                                                <groupId>com.sun.jmx</groupId>
+
+                                                                                <artifactId>jmxri</artifactId>
+
+                                                                </exclusion>
+
+                                                </exclusions>
+
+                                </dependency>
+
+ 
+
+                                <dependency>
+
+                                                <groupId>org.apache.spark</groupId>
+
+                                                <artifactId>spark-core_2.10</artifactId>
+
+                                                <version>1.5.0</version>
+
+                                </dependency>
+
+                               
+
+                                <dependency>
+
+                                                <groupId>org.apache.spark</groupId>
+
+                                                <artifactId>spark-streaming_2.10</artifactId>
+
+                                                <version>1.5.0</version>
+
+                                </dependency>
+
+ 
+
+                                <dependency>
+
+                                                <groupId>org.apache.spark</groupId>
+
+                                                <artifactId>spark-streaming-kafka_2.10</artifactId>
+
+                                                <version>1.5.0</version>
+
+                                </dependency>
+
+ 
+
+                                <dependency>
+
+                                                <groupId>com.jcabi.incubator</groupId>
+
+                                                <artifactId>xembly</artifactId>
+
+                                                <version>0.17</version>
+
+                                </dependency>
+
+ 
+
+                                <!-- <dependency>
+
+                                                <groupId>org.apache.hbase</groupId>
+
+                                                <artifactId>hbase-client</artifactId>
+
+                                                <version>1.0.0-cdh5.5.0</version>
+
+                                </dependency> -->
+
+ 
+
+                                <dependency>
+
+                                                <groupId>net.java.dev.jets3t</groupId>
+
+                                                <artifactId>jets3t</artifactId>
+
+                                                <version>0.8.0</version>
+
+                                </dependency>
+
+ 
+
+                </dependencies>
+
+               
+
+                <build>
+
+                                <plugins>
+
+                                                <plugin>
+
+                                                                <artifactId>maven-assembly-plugin</artifactId>
+
+                                                                <version>2.4</version>
+
+                                                                <configuration>
+
+                                                                                <descriptorRefs>
+
+                                                                                                <descriptorRef>jar-with-dependencies</descriptorRef>
+
+                                                                                </descriptorRefs>
+
+                                                                                <archive>
+
+                                                                                                <manifest>
+
+                                                                                                                <addClasspath>true</addClasspath>
+
+                                                                                                                <classpathPrefix>lib/</classpathPrefix>
+
+                                                                                                                <mainClass>com.Producer</mainClass>
+
+                                                                                                </manifest>
+
+                                                                                </archive>
+
+                                                                </configuration>
+
+                                                                <executions>
+
+                                                                                <execution>
+
+                                                                                                <id>make-assembly</id>
+
+                                                                                                <phase>package</phase>
+
+                                                                                                <goals>
+
+                                                                                                                <goal>single</goal>
+
+                                                                                                </goals>
+
+                                                                                </execution>
+
+                                                                </executions>
+
+                                                </plugin>
+
+                                </plugins>
+
+                </build>
+
+</project>
+
+ 
+
++++++++++++++++++++++
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+
+                xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+                <modelVersion>4.0.0</modelVersion>
+
+                <groupId>com</groupId>
+
+                <artifactId>SSSspark</artifactId>
+
+                <version>0.0.1-SNAPSHOT</version>
+
+ 
+
+                <name>fault-detection-spark</name>
+
+                <url>http://maven.apache.org</url>
+
+ 
+
+                <properties>
+
+                                <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+                </properties>
+
+ 
+
+                <dependencies>
+
+                                <dependency>
+
+                                                <groupId>com</groupId>
+
+                                                <artifactId>hconnector</artifactId>
+
+                                                <version>0.0.1-SNAPSHOT</version>
+
+                                </dependency>
+
+ 
+
+                                <dependency>
+
+                                                <groupId>com</groupId>
+
+                                                <artifactId>common</artifactId>
+
+                                                <version>0.0.1-SNAPSHOT</version>
+
+                                </dependency>
+
+ 
+
+                                <dependency>
+
+                                                <groupId>org.apache.kafka</groupId>
+
+                                                <artifactId>kafka_2.10</artifactId>
+
+                                                <version>0.8.1.1</version>
+
+                                                <exclusions>
+
+                                                                <exclusion>
+
+                                                                                <groupId>javax.jms</groupId>
+
+                                                                                <artifactId>jms</artifactId>
+
+                                                                </exclusion>
+
+                                                                <exclusion>
+
+                                                                                <groupId>com.sun.jdmk</groupId>
+
+                                                                                <artifactId>jmxtools</artifactId>
+
+                                                                </exclusion>
+
+                                                                <exclusion>
+
+                                                                                <groupId>com.sun.jmx</groupId>
+
+                                                                                <artifactId>jmxri</artifactId>
+
+                                                                </exclusion>
+
+                                                </exclusions>
+
+                                </dependency>
+
+ 
+
+                                <dependency>
+
+                                                <groupId>org.apache.spark</groupId>
+
+                                                <artifactId>spark-core_2.10</artifactId>
+
+                                                <version>1.5.0</version>
+
+                                </dependency>
+
+ 
+
+                                <dependency>
+
+                                                <groupId>org.apache.spark</groupId>
+
+                                                <artifactId>spark-streaming_2.10</artifactId>
+
+                                                <version>1.5.0</version>
+
+                                </dependency>
+
+ 
+
+                                <dependency>
+
+                                                <groupId>org.apache.spark</groupId>
+
+                                                <artifactId>spark-streaming-kafka_2.10</artifactId>
+
+                                                <version>1.5.0</version>
+
+                                </dependency>
+
+ 
+
+                                <dependency>
+
+                                                <groupId>com.jcabi.incubator</groupId>
+
+                                                <artifactId>xembly</artifactId>
+
+                                                <version>0.17</version>
+
+                                </dependency>
+
+ 
+
+                                <dependency>
+
+                                                <groupId>org.apache.hbase</groupId>
+
+                                                <artifactId>hbase-client</artifactId>
+
+                                                <version>1.0.0-cdh5.5.0</version>
+
+                                </dependency>
+
+ 
+
+                                <dependency>
+
+                                                <groupId>org.apache.hbase</groupId>
+
+                                                <artifactId>hbase-server</artifactId>
+
+                                                <version>1.0.0-cdh5.5.0</version>
+
+                                </dependency>
+
+ 
+
+                                <dependency>
+
+                                                <groupId>net.java.dev.jets3t</groupId>
+
+                                                <artifactId>jets3t</artifactId>
+
+                                                <version>0.7.1</version>
+
+                                </dependency>
+
+ 
+
+                                <!-- <dependency> <groupId>org.apache.hbase</groupId> <artifactId>hbase-client</artifactId>
+
+                                                <version>1.0.0-cdh5.5.0</version> </dependency> -->
+
+                                               
+
+                                <dependency>
+
+                                                <groupId>org.slf4j</groupId>
+
+                                                <artifactId>slf4j-api</artifactId>
+
+                                                <version>1.7.5</version>
+
+                                </dependency>
+
+                               
+
+                                <dependency>
+
+                                                <groupId>org.slf4j</groupId>
+
+                                                <artifactId>slf4j-simple</artifactId>
+
+                                                <version>1.7.5</version>
+
+                                                <scope>test</scope>
+
+                                </dependency>
+
+                </dependencies>
+
+ 
+
+                <repositories>
+
+                                <repository>
+
+                                                <id>cloudera-repo-releases</id>
+
+                                                <url>http://repository.cloudera.com/artifactory/repo/</url>
+
+                                </repository>
+
+                </repositories>
+
+ 
+
+                <build>
+
+                                <plugins>
+
+                                                <plugin>
+
+                                                                <artifactId>maven-assembly-plugin</artifactId>
+
+                                                                <version>2.4</version>
+
+                                                                <configuration>
+
+                                                                                <descriptorRefs>
+
+                                                                                                <descriptorRef>jar-with-dependencies</descriptorRef>
+
+                                                                                </descriptorRefs>
+
+                                                                                <archive>
+
+                                                                                                <manifest>
+
+                                                                                                                <addClasspath>true</addClasspath>
+
+                                                                                                                <classpathPrefix>lib/</classpathPrefix>
+
+                                                                                                                <mainClass>com.Producer</mainClass>
+
+                                                                                                </manifest>
+
+                                                                                </archive>
+
+                                                                </configuration>
+
+                                                                <executions>
+
+                                                                                <execution>
+
+                                                                                                <id>make-assembly</id>
+
+                                                                                                <phase>package</phase>
+
+                                                                                                <goals>
+
+                                                                                                                <goal>single</goal>
+
+                                                                                                </goals>
+
+                                                                                </execution>
+
+                                                                </executions>
+
+                                                </plugin>
+
+                                </plugins>
+
+                </build>
+
+</project>
+
+ 
+
+val sqlContext = new org.apache.spark.sql.hive.HiveContext(sc)
+
+   sqlContext.sql("CREATE TABLE IF NOT EXISTS e360_models.employee(id INT, name STRING, age INT) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n'")
+
+ 
+
+   sqlContext.sql("insert into table e360_models.employee select t.* from (select 1210, 'rahul', 55) t")
+
+   sqlContext.sql("insert into table e360_models.employee select t.* from (select 1211, 'sriram pv', 35) t")
+
+   sqlContext.sql("insert into table e360_models.employee select t.* from (select 1212, 'gowri', 59) t")
+
+ 
+
+   val result = sqlContext.sql("FROM e360_models.employee SELECT id, name, age")
+
+   result.show()
+
+ 
+
+set hive.merge.mapfiles =true;
+
+set hive.merge.mapredfiles =true;
+
+set hive.merge.smallfiles.avgsize=1024000000;
+
+ 
+
+=========
+
+Settings.xml
+
+ 
+
+<settings>
+
+ 
+
+ 
+
+  <activeProfiles>
+
+    <!--make the profile active all the time -->
+
+    <activeProfile>securecentral</activeProfile>
+
+  </activeProfiles>
+
+  <profiles>
+
+    <profile>
+
+      <id>securecentral</id>
+
+      <!--Override the repository (and pluginRepository) "central" from the
+
+         Maven Super POM -->
+
+      <repositories>
+
+        <repository>
+
+          <id>central</id>
+
+          <url>http://repo1.maven.org/maven2</url>
+
+          <releases>
+
+            <enabled>true</enabled>
+
+          </releases>
+
+        </repository>
+
+      </repositories>
+
+      <pluginRepositories>
+
+        <pluginRepository>
+
+          <id>central</id>
+
+          <url>http://repo1.maven.org/maven2</url>
+
+          <releases>
+
+            <enabled>true</enabled>
+
+          </releases>
+
+        </pluginRepository>
+
+      </pluginRepositories>
+
+    </profile>
+
+  </profiles>
+
+ 
+
+ 
+
+ 
+
+<proxies>
+
+    <proxy>
+
+      <id>proxy</id>
+
+      <active>true</active>
+
+      <protocol>http</protocol>
+
+      <host>p.com</host>
+
+      <port>zzz</port>
+
+      <username>xxxxxx</username>
+
+      <password>xxxxxx</password>
+
+    </proxy>
+
+</proxies>
+
+</settings>
+
