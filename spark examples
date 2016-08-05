@@ -1,0 +1,598 @@
+package com
+
+import org.apache.spark.SparkConf
+import org.apache.spark.SparkContext
+import org.apache.spark.rdd.RDD.rddToPairRDDFunctions
+
+object WCount {
+  def main(args: Array[String]) = {
+  
+    //Start the Spark context
+    val conf = new SparkConf().setAppName("WordCount").setMaster("local")
+    val sc = new SparkContext(conf)
+    val input = args(0)   // i/p file path /home/work/input/wordcountinput.txt
+    val output = args(1)  // o/p file path /home/work/output/sparkwordcountoutput
+    
+    val test = sc.textFile(input)
+    test.collect.foreach(println)
+
+    test.flatMap(line => line.split(",")).map(word => (word, 1))
+        .reduceByKey(_ + _).saveAsTextFile(output)
+        
+    sc.stop  
+  }
+}
+
+
+    //  val test = sc.textFile("hdfs://localhost:9000/work/input/wordcountinput.txt")
+    //  .saveAsTextFile("hdfs://localhost:9000/work/input/sparkwordcountoutput.txt")
+    //  .saveAsTextFile("/home/nagamalli/work/input/sparkwordcountoutput") //Save to a text file
+
+    //for each line split the line in word by word.
+    //for each word Return a key/value tuple, with the word as key and 1 as value
+    //Sum all of the value with same key
+
+=================
+
+package com
+
+import org.apache.spark.rdd.RDD
+import org.apache.spark.SparkConf
+import org.apache.spark.SparkContext
+import org.apache.spark.sql.SQLContext
+
+object WordHive {
+   case class Person(name: String, age: Int)
+  
+  def main(args: Array[String]) = {
+    
+    val conf = new SparkConf().setAppName("WordSQL").setMaster("local")
+      
+    val sc = new SparkContext(conf)
+
+    val sqlContext = new org.apache.spark.sql.hive.HiveContext(sc)
+    
+    import sqlContext.implicits._
+
+//     sqlContext.sql("CREATE TABLE IF NOT EXISTS peopletab (key INT, value STRING) ")
+
+    sqlContext.sql("create table if not exists peopletab ( name string, age int) row format delimited fields terminated by '\t' lines terminated by '\n' stored as textfile")
+
+     sqlContext.sql("LOAD DATA LOCAL INPATH '/home/nag/work/input/people.txt' INTO TABLE peopletab")
+
+  // Queries are expressed in HiveQL
+//  sqlContext.sql("use default")
+//  sqlContext.sql("select * from mypet2").collect().foreach(println)
+  sqlContext.sql("select * from peopletab").collect().foreach(println)
+
+//   sqlContext.sql("drop table people")
+   
+   sc.stop
+
+  }
+}
+====================
+
+package com
+
+import java.util.Properties
+import kafka.producer.Producer
+import kafka.producer.ProducerConfig
+import kafka.producer.KeyedMessage
+import java.lang.String
+
+object WordsProducer {
+  
+  def main(args: Array[String]) {
+    
+  val topic = "word_topics"
+  val brokers = "localhost:9092"
+  
+  val props = new Properties()
+  props.put("metadata.broker.list", brokers)
+  props.put("serializer.class", "kafka.serializer.StringEncoder")
+//props.put("partitioner.class", "com.colobu.kafka.SimplePartitioner")
+  props.put("producer.type", "async")
+//props.put("request.required.acks", "1")
+  val config = new ProducerConfig(props)
+  val producer = new Producer[String, String](config)
+ 
+  val msg =
+	"One morning, when Gregor Samsa woke from troubled dreams, " +
+	"he found himself transformed in his bed intoa horrible " + 
+	"vermin. He lay on his armour-like back, and if he lifted " + 
+	"his head a little he could see his brown belly, slightly " + 
+	"domed and divided by arches into stiff sections."
+  var i = 0
+   var j : Int  = 42;  
+  var imageName = "_%03" + "_%s"
+		for (i <- 1 to 100) {
+			val data = new KeyedMessage[String, String](topic, msg)
+			System.out.println(" msg 1: " + i )
+			System.out.println("M" + "%03d".format(i))
+			producer.send(data)
+		}
+		System.out.println("Produced data");
+
+  producer.close();
+  }
+}
+=======================
+package com
+
+import org.apache.spark.rdd.RDD
+import org.apache.spark.SparkConf
+import org.apache.spark.SparkContext
+import org.apache.spark.sql.SQLContext
+
+object WordSql {
+  
+  case class Person(name: String, age: Int)
+  
+  def main(args: Array[String]) = {
+    
+    val conf = new SparkConf()
+        .setAppName("WordSQL")
+        .setMaster("local")
+      
+    val sc = new SparkContext(conf)
+
+    val sqlContext = new org.apache.spark.sql.SQLContext(sc)
+    
+    import sqlContext.implicits._
+
+    val people = sc.textFile("/home/nag/work/input/people.txt")
+                   .map(_.split("\t")).map(p => Person(p(0), p(1).trim.toInt)).toDF()
+    
+    people.registerTempTable("people")
+
+    val teenagers = sqlContext.sql("SELECT name, age FROM people WHERE age >= 13 AND age <= 19")
+
+    teenagers.map(t => "Name: " + t(0)).collect().foreach(println)
+
+    teenagers.map(t => "Name: " + t.getAs[String]("name")).collect().foreach(println)
+
+    teenagers.map(_.getValuesMap[Any](List("name", "age"))).collect().foreach(println)
+  
+    sc.stop
+  }
+}
+==============
+package com
+
+import java.util.HashMap
+import java.util.concurrent
+import java.util.ConcurrentModificationException
+import org.apache.kafka.clients.producer.{ProducerConfig, KafkaProducer, ProducerRecord}
+import org.apache.spark.streaming._
+import org.apache.spark.streaming.kafka._
+import org.apache.spark.SparkConf
+
+//import org.apache.spark.examples.streaming.StreamingExamples
+
+object KafkaWordCount {
+  def main(args: Array[String]) {
+    if (args.length < 4) {
+      System.err.println("Usage: KafkaWordCount <zkQuorum> <group> <topics> <numThreads>")
+      System.exit(1)
+    }
+    
+//    StreamingExamples.setStreamingLogLevels()
+
+//    val Array(zkQuorum, group, topics, numThreads) = args
+    val Array(zookeeper, group, topics, numThreads) = args
+//    val sparkConf = new SparkConf().setAppName("KafkaWordCount").set("spark.ui.port", "4040" ).set("spark.driver.allowMultipleContexts", "true")
+    val sparkConf = new SparkConf().setAppName("KafkaWordCount").setMaster("spark://localhost:7077")
+    println("line1 zookeeper, group, topics, numThreads: " + zookeeper, group, topics, numThreads)
+    val ssc = new StreamingContext(sparkConf, Seconds(2))
+    
+    println("line2")
+    ssc.checkpoint("checkpoint")
+    
+    println("line3")
+    
+    val topicMap = topics.split(",").map((_, numThreads.toInt)).toMap
+//    val lines = KafkaUtils.createStream(ssc, zkQuorum, group, topicMap).map(_._2)
+    val lines = KafkaUtils.createStream(ssc, zookeeper, group, topicMap).map(_._2)
+    val words = lines.flatMap(_.split(" "))
+    val wordCounts = words.map(x => (x, 1L))
+      .reduceByKeyAndWindow(_ + _, _ - _, Minutes(1), Seconds(2), 2)
+    wordCounts.print()
+    
+    ssc.start()
+    ssc.awaitTermination()
+  }
+}
+
+
+
+package com
+
+import java.util.HashMap
+import java.util.Timer
+import java.util.TimerTask
+import java.util.Date
+
+import org.apache.kafka.clients.producer.{ProducerConfig, KafkaProducer, ProducerRecord}
+
+import org.apache.spark.streaming._
+import org.apache.spark.streaming.kafka._
+import org.apache.spark.SparkConf
+
+
+object KafkaWordCountProducer {
+
+  def main(args: Array[String]) {
+    if (args.length < 4) {
+      System.err.println("Usage: KafkaWordCountProducer <metadataBrokerList> <topic> " +
+        "<messagesPerSec> <wordsPerMessage>")
+      System.exit(1)
+    }
+
+    val Array(brokers, topic, messagesPerSec, wordsPerMessage) = args
+
+    // Zookeeper connection properties
+    val props = new HashMap[String, Object]()
+    props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, brokers)
+    props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
+      "org.apache.kafka.common.serialization.StringSerializer")
+    props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
+      "org.apache.kafka.common.serialization.StringSerializer")
+
+    val producer = new KafkaProducer[String, String](props)
+    println (" kafka wordcountProducer:")
+    
+    val rnd = new scala.util.Random
+    val range = 1 to 10
+    
+    val task = new TimerTask() {
+        @Override
+        def run() {
+          var j = 1
+          while(j <= 100) {
+            val randomVal = (range(rnd.nextInt(range length)))          
+            System.out.println("Hello World " + j + " " + System.currentTimeMillis() + " no." + scala.util.Random.nextInt(10).toString + " randomVal : " + randomVal );
+            val str = "Hello World " + j + " " + System.currentTimeMillis() + scala.util.Random.nextInt(10).toString 
+            val message = new ProducerRecord[String, String](topic, null, str)
+            producer.send(message)
+
+            j = j + 1
+          }
+        }
+    };
+
+    val timer = new Timer()
+    timer.schedule(task, new Date(), 1000);
+  }
+}    
+    // Send some messages
+//    while(true) {
+/*    var i=0;
+    while(i < 5 ) {
+      println("iteration: " + i + " start time:" + System.currentTimeMillis() )
+      (1 to messagesPerSec.toInt).foreach { messageNum =>
+        val str = (1 to wordsPerMessage.toInt).map(x => scala.util.Random.nextInt(10).toString)
+          .mkString(" ")
+
+        val message = new ProducerRecord[String, String](topic, null, str)
+        producer.send(message)
+        println ("message:" + message + "i:" + i)        
+      }
+      i = i + 1 
+      println("before sleep : " + i + " end time:" + System.currentTimeMillis() )
+      Thread.sleep(1000)
+      println("after sleep : " + i + " end time:" + System.currentTimeMillis() )
+    }
+    println (" true message:")*/
+  
+=======================
+package com
+
+import java.util.HashMap
+import java.util.Timer
+import java.util.TimerTask
+import java.util.Date
+
+import org.apache.kafka.clients.producer.{ProducerConfig, KafkaProducer, ProducerRecord}
+import org.apache.spark.streaming._
+import org.apache.spark.streaming.kafka._
+import org.apache.spark.SparkConf
+
+object MeterMessagesProducer {
+  
+  def main(args: Array[String]) {
+
+    val brokers = "localhost:9092"
+    val topic 	= "meter_messages_topic"
+
+    // Zookeeper connection properties
+    val props = new HashMap[String, Object]()
+    props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, brokers)
+    props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,"org.apache.kafka.common.serialization.StringSerializer")
+    props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,"org.apache.kafka.common.serialization.StringSerializer")
+
+    val producer = new KafkaProducer[String, String](props)
+    println (" kafka xml Producer:")
+
+    val rnd = new scala.util.Random
+    val range = 1 to 100
+//    val status = 0 to 1
+
+    val task = new TimerTask() {
+        @Override
+        def run() {
+          var j = 1
+          while(j <= 10 ) {
+
+            val id = range(rnd.nextInt(range length))
+            val meterId = "M" + "%05d".format(id)
+            
+            val status = rnd.nextInt(2)
+
+            val str = meterId + "," + status + "," + System.currentTimeMillis() + "," + System.currentTimeMillis()
+            val z = System.currentTimeMillis()
+            
+            System.out.println("meterId: " + meterId + "," + status + "," + System.currentTimeMillis() + "z class:" + z.getClass())
+            
+//            val str = "Hello World " + j + " " + System.currentTimeMillis() + j.toLong
+
+            val message = new ProducerRecord[String, String](topic, null, str)
+
+            producer.send(message)
+
+            j = j + 1
+          }
+        }
+    };
+
+    val timer = new Timer()
+    timer.schedule(task, new Date(), 1000);
+  }
+}
+=======================
+
+package com
+
+import java.util.Properties
+import java.util.concurrent._
+import scala.collection.JavaConversions._
+import kafka.consumer.Consumer
+import kafka.consumer.ConsumerConfig
+import kafka.utils._
+import kafka.utils.Logging
+import kafka.consumer.KafkaStream
+
+/*class ScalaConsumerExample extends App {
+  System.out.println("Hi")
+}*/
+class ScalaConsumerExample(val zookeeper: String,
+  val groupId: String,
+  val topic: String,
+  val delay: Long) extends Logging {
+  
+  val config = createConsumerConfig(zookeeper, groupId)
+  val consumer = Consumer.create(config)
+  var executor: ExecutorService = null
+  
+  def shutdown() = {
+    println("in shutdown function")
+    if (consumer != null)
+    consumer.shutdown();
+    if (executor != null)
+    executor.shutdown();
+  }
+
+  def createConsumerConfig(zookeeper: String, groupId: String): ConsumerConfig = {
+    println("in createCOnsumerCOnfig function")
+    val props = new Properties()
+    props.put("zookeeper.connect", zookeeper);
+    props.put("group.id", groupId);
+    props.put("auto.offset.reset", "largest");
+    props.put("zookeeper.session.timeout.ms", "400");
+    props.put("zookeeper.sync.time.ms", "200");
+    props.put("auto.commit.interval.ms", "1000");
+    val config = new ConsumerConfig(props)
+    config
+  }
+  
+  def run(numThreads: Int) = {
+    println("in run function")
+    val topicCountMap = Map(topic -> numThreads)
+    val consumerMap = consumer.createMessageStreams(topicCountMap);
+    val streams = consumerMap.get(topic).get;
+    executor = Executors.newFixedThreadPool(numThreads);
+    var threadNumber = 0;
+    for (stream <- streams) {
+      executor.submit(new ScalaConsumerTest(stream, threadNumber, delay))
+      threadNumber += 1
+    }
+  }
+}
+
+object ScalaConsumerExample extends App {
+   println("in ScalaCOnsumerExample object")
+    val example = new ScalaConsumerExample(args(0), args(1), args(2),args(4).toLong)
+    example.run(args(3).toInt)
+ }
+
+class ScalaConsumerTest(val stream: KafkaStream[Array[Byte], Array[Byte]], val threadNumber: Int, val delay: Long) extends Logging with Runnable {
+  def run {
+    println ("before in ScalaConsumerTest object it :" + stream )
+    val it = stream.iterator()
+    println ("after in ScalaConsumerTest object it :" + it)
+    while (it.hasNext()) {
+    val msg = new String(it.next().message());
+    System.out.println(System.currentTimeMillis() + ",Thread " + threadNumber + ": " + msg);
+    }
+  System.out.println("Shutting down Thread: " + threadNumber);
+  }
+}
+
+
+=================
+package com
+
+import kafka.producer.ProducerConfig
+import java.util.Properties
+import kafka.producer.Producer
+import scala.util.Random
+import kafka.producer.Producer
+import kafka.producer.KeyedMessage
+import java.util.Date
+
+object ScalaProducerExample extends App {
+/*val events = args(0).toInt
+val topic = args(1)
+val brokers = args(2)*/
+  val events = 5000
+  val topic = "test_kafka_topic"
+  val brokers = "localhost:9092"
+  val rnd = new Random()
+  val props = new Properties()
+  props.put("metadata.broker.list", brokers)
+  props.put("serializer.class", "kafka.serializer.StringEncoder")
+//props.put("partitioner.class", "com.colobu.kafka.SimplePartitioner")
+  props.put("producer.type", "async")
+//props.put("request.required.acks", "1")
+  val config = new ProducerConfig(props)
+  val producer = new Producer[String, String](config)
+  val t = System.currentTimeMillis()
+  System.out.println("current time:" + t)
+  
+  val runtime1 = new Date().getTime();
+  for (nEvents <- Range(0, events)) {
+  val runtime = new Date().getTime();
+    val ip = "192.168.2." + rnd.nextInt(255);
+    val msg = runtime + "," + nEvents + ",www.example.com," + ip;
+    val data = new KeyedMessage[String, String](topic, ip, msg);
+    System.out.println("msg:" + msg)
+    producer.send(data);
+  }
+  val runtime2 = new Date().getTime();
+  
+    System.out.println("start time:" + runtime1 + " end time:" + runtime2)
+
+  System.out.println("end time:" + System.currentTimeMillis() + " - " + t)
+  val diff = System.currentTimeMillis() - t
+  System.out.println("end time:" + System.currentTimeMillis() + " - " + t + " diff:" + diff)
+  System.out.println("sent per second: " + events + " * " + 1000 + " / " + (System.currentTimeMillis() - t));
+  System.out.println("sent per second: " + events * 1000 / (System.currentTimeMillis() - t));
+  producer.close();
+}
+
+=====================
+
+package com
+
+import java.util
+import kafka.serializer.{DefaultDecoder, StringDecoder}
+import org.apache.hadoop.conf.Configuration
+import org.apache.hadoop.hbase.HBaseConfiguration
+import org.apache.hadoop.hbase.client.Put
+import org.apache.hadoop.hbase.io.ImmutableBytesWritable
+import org.apache.hadoop.hbase.util.Bytes
+import org.apache.hadoop.hbase.mapreduce.TableOutputFormat
+import org.apache.hadoop.io.{LongWritable, Writable, IntWritable, Text}
+import org.apache.hadoop.mapred.{TextOutputFormat, JobConf}
+//import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat
+import org.apache.spark.SparkConf
+import org.apache.spark.streaming.{Minutes, Seconds, StreamingContext}
+import org.apache.spark.rdd.PairRDDFunctions
+//import org.apache.spark.storage.StorageLevel
+import org.apache.spark.streaming.kafka.{HasOffsetRanges, KafkaUtils}
+
+//import scala.collection.mutable.ListBuffer
+
+/**
+ * Consumes messages from one or more topics in Kafka and does parsing and load events data into Hbase.
+ * Usage: SparkStreamConsumer <zkQuorum> <group> <topics> <numThreads>
+ *   <zkQuorum> is a list of one or more zookeeper servers that make quorum
+ *   <group> is the name of kafka consumer group
+ *   <topics> is a list of one or more kafka topics to consume from
+ *   <numThreads> is the number of threads the kafka consumer should use
+ */
+
+object SparkStreamConsumer extends Serializable {
+  
+  final val tableName = "hdfs://localhost:9000/hbase/meterevents"
+  final val cfEventsBytes = Bytes.toBytes("events")
+  final val colStatusBytes = Bytes.toBytes("staus")
+  
+  // schema for meter events data
+  case class MeterEvents(meterid: String, date: String, time: String, status: Int)
+
+  object MeterEvents extends Serializable {
+    
+// function to parse line of meter events data into MeterEvents class
+    def parseEvents(str: String): MeterEvents = {
+      val p = str.split(",")
+      MeterEvents(p(0), p(1), p(2), p(3).toInt)
+    }
+    
+// Convert a row of MeterEvents object data to an HBase put object
+    def convertToPut(meterevents: MeterEvents): (ImmutableBytesWritable, Put) = {
+      val dateTime = meterevents.date + " " + meterevents.time
+    
+// create a composite row key: meterid_date time
+      val rowkey = meterevents.meterid + "_" + dateTime
+      val put = new Put(Bytes.toBytes(rowkey))
+    
+// add to column family data, column data values to put object
+      put.add(cfEventsBytes, colStatusBytes, Bytes.toBytes(meterevents.status))
+      return (new ImmutableBytesWritable(Bytes.toBytes(rowkey)), put)
+    }
+  }
+  
+  def main(args: Array[String]) {
+
+//  set up Integration setting
+    val zkQuorum  = "localhost:2181"
+    val group = "meter_messages_group"
+    val topics = "meter_messages_topic"
+    val numThreads = 10
+
+// set up HBase Table configuration
+    val conf = HBaseConfiguration.create()
+    conf.set(TableOutputFormat.OUTPUT_TABLE, tableName)
+    conf.set("hbase.zookeeper.quorum", "localhost:2181")
+    conf.set("hbase.master", "localhost:60000");
+//    conf.set("hbase.rootdir", "file:///tmp/hbase")
+    conf.set("hbase.rootdir", "hdfs://localhost:9000/hbase")
+ 
+    val jobConfig: JobConf = new JobConf(conf, this.getClass)
+    jobConfig.set("mapreduce.job.output.key.class", classOf[Text].getName)
+    jobConfig.set("mapreduce.job.output.value.class", classOf[LongWritable].getName)
+    jobConfig.set("mapreduce.outputformat.class", classOf[TableOutputFormat[Text]].getName)
+ 
+    
+/*    jobConfig.set("mapreduce.output.fileoutputformat.outputdir", "/user/user01/out")
+    jobConfig.setOutputFormat(classOf[TableOutputFormat])
+    jobConfig.set(TableOutputFormat.OUTPUT_TABLE, tableName)
+*/
+    
+//    val sparkConf = new SparkConf().setAppName("SparkStreamConsumer").setMaster("spark://localhost:7077")
+    val sparkConf = new SparkConf().setAppName("SparkStreamConsumer")
+    val ssc = new StreamingContext(sparkConf, Seconds(2))
+    ssc.checkpoint("checkpoint")
+    
+// parse the messages into meterevents objects
+    val topicMap = topics.split(",").map((_, numThreads.toInt)).toMap
+//    val lines = KafkaUtils.createStream(ssc, zkQuorum, group, topicMap).map(_._2)
+    val meterDStream = KafkaUtils.createStream(ssc, zkQuorum, group, topicMap).
+        map(_._2).map(MeterEvents.parseEvents)
+    
+    meterDStream.print()
+    
+    meterDStream.foreachRDD { rdd =>
+// convert meterevents data to put object and write to HBase table column family data
+    rdd.map(MeterEvents.convertToPut).
+    saveAsHadoopDataset(jobConfig)
+    }
+
+// Start the computation
+    ssc.start()
+  
+// Wait for the computation to terminate
+    ssc.awaitTermination()
+  }
+}
